@@ -4,9 +4,10 @@ global _start:
 
 _start:
 
+ ;mmap(0, 0xFF, 0x7, 0x22, -1, 0)
  xor rax, rax
  mov al, 8
- add rax, 1
+ add rax, 1		;fix value to 0x9
  xor r9, r9
  xor rsi, rsi
  xor r8, r8
@@ -17,9 +18,10 @@ _start:
  xor rdi, rdi
  syscall
 
- mov rsi, rax
+ ;read(0, 0xFF ,rax)
+ mov rsi, rax		;new address
  mov dl, 0xff
- xor rdi, rdi
+ xor rdi, rdi		;read on stdin
  xor rax, rax
  syscall
 
