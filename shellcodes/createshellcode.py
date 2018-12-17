@@ -4,8 +4,11 @@
 import os
 
 def main():
+ print("\n\033[92m=======================\033[0m")
+ print("\033[92m BINARY ASSEMBLE/DISASS \033[0m")
+ print("\033[92m=======================\033[0m\n")
 
- file=raw_input("Entrez le nom de votre fichier (.asm): \n")
+ file=raw_input("\033[94m[+] Entrez le nom de votre fichier (.asm): \033[0m\n\n")
 
  if os.path.isfile(file) == True:
   fileWe=file.split(".")
@@ -17,25 +20,36 @@ def main():
   if fileWe[1] != "asm":
    print("[-] Le fichier spécifié n'est pas en .asm")
    exit()
+
   else:
    compilation="nasm -felf64 "+file
    os.system(compilation)
-   print("[+] Compilation terminée.")
+   print("\n\033[92m[+] Compilation terminée.\033[0m")
 
    link="ld "+fileWe[0]+".o -o "+fileWe[0]
    os.system(link)
-   print("[+] Linkage terminé.")
+   print("\033[92m[+] Linkage terminé.\033[0m")
 
    os.system("rm "+fileWe[0]+".o")
 
-   print("[+] Préparation du shellcode ...\n")
+   print("\033[92m[+] Préparation du shellcode ...\033[0m\n")
 
+   hexa="for i in $(objdump -d "+fileWe[0]+" |grep \"^ \" |cut -f2); do echo -n ' '$i; done; echo"
    regex="for i in $(objdump -d "+fileWe[0]+" |grep \"^ \" |cut -f2); do echo -n '\\x'$i; done; echo"
 
-   print("shellcode:")
-   print("<<< $(python -c 'print \"")
+   print("\033[93m[+]shellcode: \033[0m\n")
+   os.system(hexa)
    os.system(regex)
-   print("\"')")
+
+   print("\n\033[94m[+] Disass Binary\033[0m\n")
+   objdp = "objdump -d " + fileWe[0]
+   os.system(objdp)
+
+   print("\n\033[94m[+] Length Shellcode :\033[0m\n")
+   hexaLen="for i in $(objdump -d "+fileWe[0]+" |grep \"^ \" |cut -f2); do echo -n $i; done; echo"
+   print hexaLen
+   lenShell = len(hexaLen)
+   print("Length: ", lenShell/2)
 
  else:
   print("[-] Erreur le fichier specifié n'existe pas.")
